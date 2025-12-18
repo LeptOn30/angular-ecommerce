@@ -84,11 +84,11 @@ h6{
 }
 
 a{
+    text-decoration: none;
     display:inline-block
 }
 
 a:active,a:focus,a:hover{
-    text-decoration:none;
     outline:0
 }
 
@@ -97,6 +97,11 @@ a,a:hover{
     -o-transition:all .3s ease;
     -moz-transition:all .3s ease;
     transition:all .3s ease
+}
+
+a:hover{
+    text-decoration:underline;
+    outline:0
 }
 
 /*Layout Css*/
@@ -719,9 +724,15 @@ table.table.table-bordered th{
     font-weight:800;
     color:#0da8e4
 }
+
 .detail-section{
     margin-top:60px
 }
+
+.detail-img{
+    width: 30%;
+}
+
 /**/
 
 /* 
