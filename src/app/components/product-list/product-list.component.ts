@@ -13,8 +13,13 @@ export class ProductListComponent implements OnInit {
 
   products: Product[] = [];
   currentCategoryId: number = 1;
-  searchMode: boolean = false;
+  previousCategoryId: number = 1;
+  searchMode: boolean = false; 
 
+  currentPage: number = 1;
+  pageSize: number = 5;
+  totalElements: number = 0;
+  previousKeyword: string = '';
 
 
   constructor(private productService: ProductService,
@@ -51,22 +56,46 @@ export class ProductListComponent implements OnInit {
       this.currentCategoryId = 1;
     }
 
-    this.productService.getProductList(this.currentCategoryId).subscribe(
-      data => {
-        this.products = data;
-      }
-    )
+    if (this.previousCategoryId != this.currentCategoryId) {
+      this.currentPage = 1;
+    }
+
+    this.previousCategoryId = this.currentCategoryId;
+
+    this.productService.getProductListPaginate(this.currentPage - 1, this.pageSize, this.currentCategoryId)
+                        .subscribe(this.paginateResult());
   }
+
 
   handleSearchProducts() {
 
     const keyword: string = this.route.snapshot.paramMap.get('keyword')!;
 
-    this.productService.searchProducts(keyword).subscribe(
-      data => {
-        this.products = data;
-      }
-    )
+    if (this.previousKeyword != keyword) {
+      this.currentPage = 1;
+    }
+
+    this.previousKeyword = keyword;
+
+    this.productService.searchProductsPaginate(this.currentPage - 1, this.pageSize, keyword)
+                        .subscribe(this.paginateResult());
   }
+
+
+  updatePageSize(pageSize: string) {
+    this.pageSize = +pageSize;
+    this.currentPage = 1;
+    this.listProducts();
+  }
+
+  paginateResult() {
+    return (data:any) => {
+      this.products = data._embedded.products;
+      this.currentPage = data.page.number + 1;
+      this.pageSize = data.page.size;
+      this.totalElements = data.page.totalElements;
+    }
+  }
+
 
 }
